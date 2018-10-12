@@ -38,6 +38,11 @@ final class Contact implements Arrayable
     private $dataFields;
 
     /**
+     * @var string
+     */
+    private $status;
+
+    /**
      * @param int|null $id
      * @param string $email
      * @param string $optInType
@@ -49,13 +54,15 @@ final class Contact implements Arrayable
         string $email,
         string $optInType = self::OPT_IN_TYPE_UNKNOWN,
         string $emailType = self::EMAIL_TYPE_PLAIN_TEXT,
-        array $dataFields = []
+        array $dataFields = [],
+    	string $status = null
     ) {
         $this->id = $id;
         $this->email = $email;
         $this->optInType = $optInType;
         $this->emailType = $emailType;
         $this->dataFields = $dataFields;
+        $this->status = $status;
     }
 
     /**
@@ -161,6 +168,7 @@ final class Contact implements Arrayable
             'optInType' => $this->optInType,
             'emailType' => $this->emailType,
             'dataFields' => $this->dataFields,
+        	'status' => $this->status,
         ];
     }
 }

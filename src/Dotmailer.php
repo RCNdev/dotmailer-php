@@ -161,7 +161,8 @@ class Dotmailer
             $contact->email,
             $contact->optInType,
             $contact->emailType,
-            $contact->dataFields
+            $contact->dataFields,
+        	$contact->status
         );
     }
 
