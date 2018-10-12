@@ -106,6 +106,14 @@ final class Contact implements Arrayable
     }
 
     /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+    	return $this->status;
+    }
+
+    /**
      * @return array
      */
     public function getDataFields(): array
