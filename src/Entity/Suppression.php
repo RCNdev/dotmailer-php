@@ -39,9 +39,9 @@ final class Suppression implements Arrayable
 		\DateTime $dateRemoved,
 		string $reason
 	) {
-		$this->id = $suppressedContact;
-		$this->email = $dateRemoved;
-		$this->optInType = $reason;
+		$this->suppressedContact = $suppressedContact;
+		$this->dateRemoved = $dateRemoved;
+		$this->reason = $reason;
 	}
 
 	/**
