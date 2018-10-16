@@ -376,4 +376,43 @@ class Dotmailer
             ]
         );
     }
+
+    /**
+     * @param \DateTimeInterface $dateTime
+     * @param int|null $select
+     * @param int|null $skip
+     *
+     * @return Contact[]
+     */
+    public function getSuppressedContactsSince(
+    	\DateTimeInterface $dateTime,
+    	int $select = null,
+    	int $skip = null
+    ): array {
+    	$this->response = $this->adapter->get(
+    		'/v2/contacts/suppressed-since/' . $dateTime->format('Y-m-d'),
+    		array_filter([
+    			'select' => $select,
+    			'skip' => $skip,
+    		])
+    	);
+
+    	$suppressions = [];
+
+    	foreach (json_decode($this->response->getBody()->getContents()) as $suppression) {
+    		$suppressions[] = [
+    			'suppressedContact' => new Contact(
+    				$suppression->suppressedContact->id,
+    				$suppression->suppressedContact->email,
+    				$suppression->suppressedContact->optInType,
+    				$suppression->suppressedContact->emailType,
+    				$suppression->suppressedContact->status,
+    			),
+    			'dateRemoved' => new \DateTime($suppression->dateRemoved),
+    			'reason' => $suppression->reason,
+    		];
+    	}
+
+    	return $suppressions;
+    }
 }
