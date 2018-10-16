@@ -405,8 +405,7 @@ class Dotmailer
     				$suppression->suppressedContact->id,
     				$suppression->suppressedContact->email,
     				$suppression->suppressedContact->optInType,
-    				$suppression->suppressedContact->emailType,
-    				$suppression->suppressedContact->status
+    				$suppression->suppressedContact->emailType
     			),
     			'dateRemoved' => new \DateTime($suppression->dateRemoved),
     			'reason' => $suppression->reason,
