@@ -45,6 +45,30 @@ final class Suppression implements Arrayable
 	}
 
 	/**
+	 * @return Contact
+	 */
+	public function getSuppressedContact(): Contact
+	{
+		return $this->suppressedContact;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDateRemoved(): \DateTime
+	{
+		return $this->dateRemoved;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getReason(): string
+	{
+		return $this->reason;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function asArray(): array
