@@ -12,7 +12,7 @@ final class Suppression implements Arrayable
 	const REASON_SUPPRESSED = 'Suppressed'; // The contact that has been actively suppressed by you in your account
 	const REASON_NOTALLOWED = 'NotAllowed'; // The contact's email address is fully blocked from our system
 	const REASON_DOMAINSUPPRESSION = 'DomainSuppression'; // The contact’s email domain is on your domain suppression list
-	const REASON_NOMXREECORD = 'NoMxRecord'; // The contact’s email domain does not have an MX DNS record. A mail exchange record provides the address of the mail server for that domain.
+	const REASON_NOMXRECORD = 'NoMxRecord'; // The contact’s email domain does not have an MX DNS record. A mail exchange record provides the address of the mail server for that domain.
 
 	/**
 	 * @var Contact
