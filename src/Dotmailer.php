@@ -391,7 +391,7 @@ class Dotmailer
     	int $skip = null
     ): array {
     	$this->response = $this->adapter->get(
-    		'/v2/contacts/suppressed-since/' . $dateTime->format('Y-m-d'),
+    		'/v2/contacts/suppressed-since/' . $dateTime->format('c'),
     		array_filter([
     			'select' => $select,
     			'skip' => $skip,
