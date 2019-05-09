@@ -163,7 +163,7 @@ class Dotmailer
             $contact->optInType,
             $contact->emailType,
             $contact->dataFields,
-        	$contact->status
+            $contact->status
         );
     }
 
@@ -386,33 +386,33 @@ class Dotmailer
      * @return Suppression[]
      */
     public function getSuppressedContactsSince(
-    	\DateTimeInterface $dateTime,
-    	int $select = null,
-    	int $skip = null
+        \DateTimeInterface $dateTime,
+        int $select = null,
+        int $skip = null
     ): array {
-    	$this->response = $this->adapter->get(
-    		'/v2/contacts/suppressed-since/' . $dateTime->format('c'),
-    		array_filter([
-    			'select' => $select,
-    			'skip' => $skip,
-    		])
-    	);
+        $this->response = $this->adapter->get(
+            '/v2/contacts/suppressed-since/' . $dateTime->format('Y-m-d'),
+            array_filter([
+                'select' => $select,
+                'skip' => $skip,
+            ])
+        );
 
-    	$suppressions = [];
+        $suppressions = [];
 
-    	foreach (json_decode($this->response->getBody()->getContents()) as $suppression) {
-    		$suppressions[] = new Suppression(
-    			new Contact(
-    				$suppression->suppressedContact->id,
-    				$suppression->suppressedContact->email,
-    				$suppression->suppressedContact->optInType,
-    				$suppression->suppressedContact->emailType
-    			),
-    			new \DateTime($suppression->dateRemoved),
-    			$suppression->reason
-    		);
-    	}
+        foreach (json_decode($this->response->getBody()->getContents()) as $suppression) {
+            $suppressions[] = new Suppression(
+                new Contact(
+                    $suppression->suppressedContact->id,
+                    $suppression->suppressedContact->email,
+                    $suppression->suppressedContact->optInType,
+                    $suppression->suppressedContact->emailType
+                ),
+                new \DateTime($suppression->dateRemoved),
+                $suppression->reason
+            );
+        }
 
-    	return $suppressions;
+        return $suppressions;
     }
 }

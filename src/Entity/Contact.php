@@ -55,7 +55,7 @@ final class Contact implements Arrayable
         string $optInType = self::OPT_IN_TYPE_UNKNOWN,
         string $emailType = self::EMAIL_TYPE_PLAIN_TEXT,
         array $dataFields = [],
-    	string $status = null
+        string $status = null
     ) {
         $this->id = $id;
         $this->email = $email;
@@ -110,7 +110,7 @@ final class Contact implements Arrayable
      */
     public function getStatus(): string
     {
-    	return $this->status;
+        return $this->status;
     }
 
     /**
@@ -176,7 +176,7 @@ final class Contact implements Arrayable
             'optInType' => $this->optInType,
             'emailType' => $this->emailType,
             'dataFields' => $this->dataFields,
-        	'status' => $this->status,
+            'status' => $this->status,
         ];
     }
 }
