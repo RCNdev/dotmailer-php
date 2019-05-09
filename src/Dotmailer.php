@@ -415,4 +415,14 @@ class Dotmailer
 
         return $suppressions;
     }
+    
+    public function bulkCreateContactsInAddressBook(AddressBook $addressBook, string $file, string $filename)
+    {
+        $this->response = $this->adapter->postfile(
+            '/v2/address-books/' . $addressBook->getId() . '/contacts/import',
+            $file,
+            $filename,
+            'text/csv'
+        );
+    }
 }
