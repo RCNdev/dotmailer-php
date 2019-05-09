@@ -11,6 +11,7 @@ use Dotmailer\Entity\Program;
 use Dotmailer\Factory\CampaignFactory;
 use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\json_decode;
+use Dotmailer\Entity\Suppression;
 
 class Dotmailer
 {
@@ -161,7 +162,8 @@ class Dotmailer
             $contact->email,
             $contact->optInType,
             $contact->emailType,
-            $contact->dataFields
+            $contact->dataFields,
+        	$contact->status
         );
     }
 
@@ -374,5 +376,43 @@ class Dotmailer
                 ),
             ]
         );
+    }
+
+    /**
+     * @param \DateTimeInterface $dateTime
+     * @param int|null $select
+     * @param int|null $skip
+     *
+     * @return Suppression[]
+     */
+    public function getSuppressedContactsSince(
+    	\DateTimeInterface $dateTime,
+    	int $select = null,
+    	int $skip = null
+    ): array {
+    	$this->response = $this->adapter->get(
+    		'/v2/contacts/suppressed-since/' . $dateTime->format('c'),
+    		array_filter([
+    			'select' => $select,
+    			'skip' => $skip,
+    		])
+    	);
+
+    	$suppressions = [];
+
+    	foreach (json_decode($this->response->getBody()->getContents()) as $suppression) {
+    		$suppressions[] = new Suppression(
+    			new Contact(
+    				$suppression->suppressedContact->id,
+    				$suppression->suppressedContact->email,
+    				$suppression->suppressedContact->optInType,
+    				$suppression->suppressedContact->emailType
+    			),
+    			new \DateTime($suppression->dateRemoved),
+    			$suppression->reason
+    		);
+    	}
+
+    	return $suppressions;
     }
 }
