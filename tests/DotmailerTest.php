@@ -14,6 +14,7 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function GuzzleHttp\json_encode;
+use Dotmailer\Entity\Suppression;
 
 class DotmailerTest extends TestCase
 {
@@ -421,6 +422,45 @@ class DotmailerTest extends TestCase
         );
 
         $this->assertEquals($response, $this->dotmailer->getResponse());
+    }
+    
+    public function testGetSuppressedContactsSince()
+    {
+        $contact = $this->getContact();
+        $dateRemoved = new \DateTime('2018-01-10');
+        
+        $this->adapter
+            ->expects($this->once())
+            ->method('get')
+            ->with(
+                '/v2/contacts/suppressed-since/' . self::DATE_FROM,
+                [
+                    'select' => 1,
+                    'skip' => 2,
+                ]
+            )
+            ->willReturn(
+                $this->getResponse(
+                    [
+                        [
+                            'suppressedContact' => $contact->asArray(),
+                            'dateRemoved' => $dateRemoved->format('Y-m-d'),
+                            'reason' => 'unsubscribed',
+                        ]
+                    ]
+                )
+            );
+            
+        $this->assertEquals(
+            [
+                new Suppression(
+                    $contact,
+                    $dateRemoved,
+                    'unsubscribed'
+                )
+            ],
+            $this->dotmailer->getSuppressedContactsSince(new \DateTime(self::DATE_FROM), 1, 2)
+        );
     }
 
     /**
