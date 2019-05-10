@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\json_decode;
 use Dotmailer\Entity\Suppression;
 use Dotmailer\Entity\ContactImportStatus;
+use Dotmailer\Entity\ContactImportReport;
 
 class Dotmailer
 {
@@ -458,5 +459,21 @@ class Dotmailer
         $importStatus = new ContactImportStatus($response->id, $response->status);
         
         return $importStatus;
+    }
+    
+    /**
+     * @param string $id GUID import ID
+     *
+     * @return ContactImportReport
+     */
+    public function getContactImportReport(string $id): ContactImportStatus
+    {
+        //TODO: Validate GUID?
+        
+        $this->response = $this->adapter->get('/v2/contacts/import/' . $id . '/report');
+        
+        $report = ContactImportReport::fromJson($this->response->getBody()->getContents());
+        
+        return $report;
     }
 }
