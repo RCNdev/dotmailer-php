@@ -12,6 +12,7 @@ use Dotmailer\Factory\CampaignFactory;
 use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\json_decode;
 use Dotmailer\Entity\Suppression;
+use Dotmailer\Entity\ContactImportStatus;
 
 class Dotmailer
 {
@@ -416,13 +417,46 @@ class Dotmailer
         return $suppressions;
     }
     
-    public function bulkCreateContactsInAddressBook(AddressBook $addressBook, string $file, string $filename)
+    /**
+     * Bulk creates, or bulk updates, contacts in an address book
+     *
+     * @param AddressBook $addressBook Object containing the ID of the address book
+     * @param string $filePath Local filesystem path of the file to be imported
+     * @param string $fileName Discrete file name to pass to API
+     *
+     * @return \Dotmailer\Entity\ContactImportStatus
+     */
+    public function bulkCreateContactsInAddressBook(AddressBook $addressBook, string $filePath, string $fileName)
     {
         $this->response = $this->adapter->postfile(
             '/v2/address-books/' . $addressBook->getId() . '/contacts/import',
-            $file,
-            $filename,
+            $filePath,
+            $fileName,
             'text/csv'
         );
+        
+        $response = json_decode($this->response->getBody()->getContents());
+        
+        $importStatus = new ContactImportStatus($response->id, $response->status);
+        
+        return $importStatus;
+    }
+    
+    /**
+     * @param string $id GUID import ID
+     *
+     * @return ContactImportStatus
+     */
+    public function getContactImportStatus(string $id): ContactImportStatus
+    {
+        //TODO: Validate GUID?
+        
+        $this->response = $this->adapter->get('/v2/contacts/import/' . $id);
+        
+        $response = json_decode($this->response->getBody()->getContents());
+        
+        $importStatus = new ContactImportStatus($response->id, $response->status);
+        
+        return $importStatus;
     }
 }

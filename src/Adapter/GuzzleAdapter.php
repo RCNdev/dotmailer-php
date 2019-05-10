@@ -86,18 +86,18 @@ class GuzzleAdapter implements Adapter
     /**
      * {@inheritDoc}
      */
-    public function postfile(string $url, string $filepath, string $filename, string $mimetype): ResponseInterface
+    public function postfile(string $url, string $filePath, string $fileName, string $mimeType): ResponseInterface
     {
         return $this->client->request('POST', $url, [
             'multipart' => [
                 [
                     'name' => 'file',
-                    'contents' => fopen($filepath, 'r'), // Just the resource; Guzzle handles the contents internally
-                    'filename' => $filename,
+                    'contents' => fopen($filePath, 'r'), // Just the resource; Guzzle handles the contents internally
+                    'filename' => $fileName,
                     'headers' => [
-                        'Content-Type' => $mimetype
+                        'Content-Type' => $mimeType
                     ]
-                ]                
+                ]
             ]
         ]);
     }

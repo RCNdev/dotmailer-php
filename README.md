@@ -56,6 +56,9 @@ Currently the following endpoints are covered:
     - [x] Unsubscribe contact
     - [x] Resubscribe contact
     - [x] Get suppressed contacts since date
+    - [ ] Bulk create contacts in address book
+    - [ ] Get contact import status
+    - [ ] Get contact import report
 - [ ] **Contact data fields**
     - [x] Create contact data field
     - [x] Delete contact data field
