@@ -466,7 +466,7 @@ class Dotmailer
      *
      * @return ContactImportReport
      */
-    public function getContactImportReport(string $id): ContactImportStatus
+    public function getContactImportReport(string $id): ContactImportReport
     {
         //TODO: Validate GUID?
         
