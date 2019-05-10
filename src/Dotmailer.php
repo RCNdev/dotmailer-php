@@ -18,6 +18,7 @@ use Dotmailer\Entity\ContactImportReport;
 class Dotmailer
 {
     const DEFAULT_URI = 'https://r1-api.dotmailer.com';
+    const GUID_REGEX = '/^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}?$/i';
 
     /**
      * @var Adapter
@@ -450,7 +451,9 @@ class Dotmailer
      */
     public function getContactImportStatus(string $id): ContactImportStatus
     {
-        //TODO: Validate GUID?
+        if (!preg_match(self::GUID_REGEX, $id)) {
+            throw new \Exception('ID did not contain a valid GUID');
+        }
         
         $this->response = $this->adapter->get('/v2/contacts/import/' . $id);
         
@@ -468,7 +471,9 @@ class Dotmailer
      */
     public function getContactImportReport(string $id): ContactImportReport
     {
-        //TODO: Validate GUID?
+        if (!preg_match(self::GUID_REGEX, $id)) {
+            throw new \Exception('ID did not contain a valid GUID');
+        }
         
         $this->response = $this->adapter->get('/v2/contacts/import/' . $id . '/report');
         
