@@ -56,8 +56,7 @@ final class ContactImportStatus implements Arrayable
 
     /**
      * @param int|null $id
-     * @param \DateTime $dateRemoved
-     * @param string $reason
+     * @param string $status
      */
     public function __construct(
         string $id,
@@ -68,7 +67,7 @@ final class ContactImportStatus implements Arrayable
     }
 
     /**
-     * @return Contact
+     * @return string
      */
     public function getId(): string
     {
@@ -76,7 +75,7 @@ final class ContactImportStatus implements Arrayable
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
     public function getStatus(): string
     {
