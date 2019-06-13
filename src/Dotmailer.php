@@ -12,10 +12,13 @@ use Dotmailer\Factory\CampaignFactory;
 use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\json_decode;
 use Dotmailer\Entity\Suppression;
+use Dotmailer\Entity\ContactImportStatus;
+use Dotmailer\Entity\ContactImportReport;
 
 class Dotmailer
 {
     const DEFAULT_URI = 'https://r1-api.dotmailer.com';
+    const GUID_REGEX = '/^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}?$/i';
 
     /**
      * @var Adapter
@@ -414,5 +417,68 @@ class Dotmailer
         }
 
         return $suppressions;
+    }
+    
+    /**
+     * Bulk creates, or bulk updates, contacts in an address book
+     *
+     * @param AddressBook $addressBook Object containing the ID of the address book
+     * @param string $filePath Local filesystem path of the file to be imported
+     * @param string $fileName Discrete file name to pass to API
+     *
+     * @return \Dotmailer\Entity\ContactImportStatus
+     */
+    public function bulkCreateContactsInAddressBook(AddressBook $addressBook, string $filePath, string $fileName)
+    {
+        $this->response = $this->adapter->postfile(
+            '/v2/address-books/' . $addressBook->getId() . '/contacts/import',
+            $filePath,
+            $fileName,
+            'text/csv'
+        );
+        
+        $response = json_decode($this->response->getBody()->getContents());
+        
+        $importStatus = new ContactImportStatus($response->id, $response->status);
+        
+        return $importStatus;
+    }
+    
+    /**
+     * @param string $id GUID import ID
+     *
+     * @return ContactImportStatus
+     */
+    public function getContactImportStatus(string $id): ContactImportStatus
+    {
+        if (!preg_match(self::GUID_REGEX, $id)) {
+            throw new \Exception('ID did not contain a valid GUID');
+        }
+        
+        $this->response = $this->adapter->get('/v2/contacts/import/' . $id);
+        
+        $response = json_decode($this->response->getBody()->getContents());
+        
+        $importStatus = new ContactImportStatus($response->id, $response->status);
+        
+        return $importStatus;
+    }
+    
+    /**
+     * @param string $id GUID import ID
+     *
+     * @return ContactImportReport
+     */
+    public function getContactImportReport(string $id): ContactImportReport
+    {
+        if (!preg_match(self::GUID_REGEX, $id)) {
+            throw new \Exception('ID did not contain a valid GUID');
+        }
+        
+        $this->response = $this->adapter->get('/v2/contacts/import/' . $id . '/report');
+        
+        $report = ContactImportReport::fromJson($this->response->getBody()->getContents());
+        
+        return $report;
     }
 }
