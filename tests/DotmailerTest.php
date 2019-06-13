@@ -15,6 +15,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use function GuzzleHttp\json_encode;
 use Dotmailer\Entity\Suppression;
+use Dotmailer\Entity\ContactImportStatus;
+use Dotmailer\Entity\ContactImportReport;
 
 class DotmailerTest extends TestCase
 {
@@ -29,6 +31,10 @@ class DotmailerTest extends TestCase
     const WEBSITE = 'http://foo.bar/baz';
     const DATA_FIELD = 'DATAFIELD';
     const DATE_FROM = '2018-01-01';
+    const NULL_GUID = '00000000-0000-0000-0000-000000000000';
+    const FILE_PATH = '/test.csv';
+    const FILE_NAME = 'test.csv';
+    const FILE_MIME_TYPE = 'text/csv';
 
     /**
      * @var Adapter|MockObject
@@ -462,6 +468,54 @@ class DotmailerTest extends TestCase
             $this->dotmailer->getSuppressedContactsSince(new \DateTime(self::DATE_FROM), 1, 2)
         );
     }
+    
+    public function testBulkCreateContactsInAddressBook()
+    {
+        $this->adapter
+            ->expects($this->once())
+            ->method('postfile')
+            ->with(
+                '/v2/address-books/' . self::ID . '/contacts/import',
+                self::FILE_PATH,
+                self::FILE_NAME,
+                self::FILE_MIME_TYPE
+            )
+            ->willReturn($this->getResponse($this->getContactImportStatus()->asArray()));
+        
+        $actual = $this->dotmailer->bulkCreateContactsInAddressBook(
+            new AddressBook(self::ID, self::NAME),
+            self::FILE_PATH,
+            self::FILE_NAME
+        );
+            
+        $this->assertEquals($this->getContactImportStatus(), $actual);
+    }
+    
+    public function testGetContactImportStatus()
+    {
+        $this->adapter
+            ->expects($this->once())
+            ->method('get')
+            ->with('/v2/contacts/import/' . self::NULL_GUID)
+            ->willReturn(
+                $this->getResponse($this->getContactImportStatus()->asArray())
+            );
+        
+        $this->assertEquals($this->getContactImportStatus(), $this->dotmailer->getContactImportStatus(self::NULL_GUID));
+    }
+    
+    public function testGetContactImportReport()
+    {
+        $this->adapter
+            ->expects($this->once())
+            ->method('get')
+            ->with('/v2/contacts/import/' . self::NULL_GUID . '/report')
+            ->willReturn(
+                $this->getResponse($this->getContactImportReport()->asArray())
+            );
+        
+        $this->assertEquals($this->getContactImportReport(), $this->dotmailer->getContactImportReport(self::NULL_GUID));
+    }
 
     /**
      * @param array $contents
@@ -517,5 +571,21 @@ class DotmailerTest extends TestCase
     private function getProgram(): Program
     {
         return new Program(self::ID, 'test program', Program::STATUS_ACTIVE, new \DateTime());
+    }
+    
+    /**
+     * @return ContactImportStatus
+     */
+    private function getContactImportStatus(): ContactImportStatus
+    {
+        return new ContactImportStatus(self::NULL_GUID, ContactImportStatus::STATUS_NOT_FINISHED);
+    }
+    
+    /**
+     * @return ContactImportReport
+     */
+    private function getContactImportReport(): ContactImportReport
+    {
+        return new ContactImportReport(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
 }
