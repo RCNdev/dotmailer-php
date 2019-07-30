@@ -256,6 +256,22 @@ class Dotmailer
 
         $this->response = $this->adapter->post('/v2/contacts/resubscribe', array_filter($content));
     }
+    
+    /**
+     * @param Contact $contact
+     * @param string|null $preferredLocale
+     * @param string|null $challengeUrl
+     */
+    public function resubscribeContactWithNoChallenge(Contact $contact)
+    {
+        $content = [
+            'unsubscribedContact' => [
+                'email' => $contact->getEmail()
+            ],
+        ];
+        
+        $this->response = $this->adapter->post('/v2/contacts/resubscribe-with-no-challenge', array_filter($content));
+    }
 
     /**
      * @param DataField $dataField

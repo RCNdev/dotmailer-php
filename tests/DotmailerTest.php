@@ -588,4 +588,25 @@ class DotmailerTest extends TestCase
     {
         return new ContactImportReport(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
     }
+    
+    public function testResubscribeContactWithNoChallenge()
+    {
+        $response = $this->getResponse();
+        
+        $this->adapter
+        ->expects($this->once())
+        ->method('post')
+        ->with(
+            '/v2/contacts/resubscribe-with-no-challenge',
+            [
+                'unsubscribedContact' => [
+                    'email' => self::EMAIL
+                ],
+            ]
+        )->willReturn($response);
+            
+        $this->dotmailer->resubscribeContactWithNoChallenge($this->getContact());
+            
+        $this->assertEquals($response, $this->dotmailer->getResponse());
+    }
 }

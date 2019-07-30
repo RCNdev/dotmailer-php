@@ -55,6 +55,7 @@ Currently the following endpoints are covered:
     - [x] Get unsubscribed contacts since date
     - [x] Unsubscribe contact
     - [x] Resubscribe contact
+    - [x] Resubscribe contact with no challenge
     - [x] Get suppressed contacts since date
     - [x] Bulk create contacts in address book
     - [x] Get contact import status
